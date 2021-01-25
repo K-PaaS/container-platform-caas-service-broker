@@ -4,7 +4,7 @@ spring:
   application:
     name: caas-service-broker
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mysql://CAAS-SERVICE-BROKER-DATASOURCE/kubernetes
     username: CAAS-SERVICE-BROKER-DATASOURCE-USERNAME
     password: CAAS-SERVICE-BROKER-DATASOURCE-PASSWORD

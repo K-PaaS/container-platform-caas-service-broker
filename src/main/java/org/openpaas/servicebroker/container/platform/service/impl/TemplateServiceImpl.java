@@ -2,6 +2,7 @@ package org.openpaas.servicebroker.container.platform.service.impl;
 
 import java.util.Map;
 
+import org.openpaas.servicebroker.container.platform.common.CommonUtils;
 import org.openpaas.servicebroker.container.platform.exception.ContainerPlatformException;
 import org.openpaas.servicebroker.container.platform.service.TemplateService;
 import org.slf4j.Logger;
@@ -30,7 +31,7 @@ public class TemplateServiceImpl implements TemplateService {
      @Autowired
      public TemplateServiceImpl(Configuration configuration) {
         this.configuration = configuration;
-          logger.info( "freemaker.Configuration : {}", this.configuration.toString());
+          logger.info( "freemaker.Configuration : {}", CommonUtils.loggerReplace(this.configuration.toString()));
      }
 
     /**

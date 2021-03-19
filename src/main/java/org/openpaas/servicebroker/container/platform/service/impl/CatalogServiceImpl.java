@@ -3,6 +3,7 @@ package org.openpaas.servicebroker.container.platform.service.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openpaas.servicebroker.container.platform.common.CommonUtils;
 import org.openpaas.servicebroker.exception.ServiceBrokerException;
 import org.openpaas.servicebroker.model.Catalog;
 import org.openpaas.servicebroker.model.ServiceDefinition;
@@ -40,7 +41,7 @@ public class CatalogServiceImpl implements CatalogService {
     private void initializeMap() {
         logger.info("--------------  initializeMap  --------------");
         for (ServiceDefinition def: catalog.getServiceDefinitions()) {
-            logger.info("--------------  initializeMap for() -------------- {}", def);
+            logger.info("--------------  initializeMap for() -------------- {}", CommonUtils.loggerReplace(def));
             serviceDefs.put(def.getId(), def);
         }
 
@@ -48,13 +49,13 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public Catalog getCatalog() throws ServiceBrokerException {
-        logger.info("--------------  getCatalog  -------------- {}", catalog);
+        logger.info("--------------  getCatalog  -------------- {}", CommonUtils.loggerReplace(catalog));
         return catalog;
     }
 
     @Override
     public ServiceDefinition getServiceDefinition(String serviceId) throws ServiceBrokerException {
-        logger.info("--------------  getServiceDefinition  -------------- {}", serviceDefs.get(serviceId));
+        logger.info("--------------  getServiceDefinition  -------------- {}", CommonUtils.loggerReplace(serviceDefs.get(serviceId)));
         return serviceDefs.get(serviceId);
     }
 }

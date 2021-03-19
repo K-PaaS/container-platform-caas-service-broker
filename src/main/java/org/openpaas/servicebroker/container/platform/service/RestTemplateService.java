@@ -14,6 +14,7 @@ import org.apache.http.impl.client.HttpClients;
 import java.util.Base64;
 import java.util.Base64.Encoder;
 
+import org.openpaas.servicebroker.container.platform.common.CommonUtils;
 import org.openpaas.servicebroker.container.platform.model.Constants;
 import org.openpaas.servicebroker.container.platform.model.User;
 import org.openpaas.servicebroker.container.platform.repo.JpaAdminTokenRepository;
@@ -100,7 +101,7 @@ public class RestTemplateService {
         try {
             restTemplate.exchange(propertyService.getContainerPlatformUrl() + "/api/v1/nodes", HttpMethod.GET, reqEntity, String.class);
         } catch (HttpStatusCodeException exception) {
-            logger.info("Maybe token was changed. {} : {}", exception.getStatusCode().value(), exception.getMessage());
+            logger.info("Maybe token was changed. {} : {}", CommonUtils.loggerReplace(exception.getStatusCode().value()), CommonUtils.loggerReplace(exception.getMessage()));
             return false;
         }
         return true;
@@ -133,7 +134,7 @@ public class RestTemplateService {
         }
         ResponseEntity<T> resEntity = restTemplate.exchange(url, httpMethod, reqEntity, responseType);
         if (reqEntity.getBody() != null) {
-            logger.info("Response Type: {}", resEntity.getBody().getClass());
+            logger.info("Response Type: {}", CommonUtils.loggerReplace(resEntity.getBody().getClass()));
         }
         
         return resEntity.getBody(); 

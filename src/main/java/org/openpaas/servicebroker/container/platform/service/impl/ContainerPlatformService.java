@@ -3,6 +3,7 @@ package org.openpaas.servicebroker.container.platform.service.impl;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import org.json.JSONObject;
+import org.openpaas.servicebroker.container.platform.common.CommonUtils;
 import org.openpaas.servicebroker.container.platform.exception.ContainerPlatformException;
 import org.openpaas.servicebroker.container.platform.model.JpaServiceInstance;
 import org.openpaas.servicebroker.container.platform.service.PropertyService;
@@ -67,7 +68,7 @@ public class ContainerPlatformService {
         this.createRole(spaceName, userName);
         this.createRoleBinding(spaceName, userName);
 
-        logger.info("work done!!! {}  {}", spaceName, userName);
+        logger.info("work done!!! {}  {}", CommonUtils.loggerReplace(spaceName), CommonUtils.loggerReplace(userName));
 
         // DB저장을 위한 JPAServiceInstance 리턴
         instance.setUserId(instance.getParameter("owner"));
@@ -86,7 +87,7 @@ public class ContainerPlatformService {
      * @since 2018.07.30
      */
     public String createNamespace(String serviceInstanceId) {
-        logger.debug("create namespace!!! {}", serviceInstanceId);
+        logger.debug("create namespace!!! {}", CommonUtils.loggerReplace(serviceInstanceId));
 
         Map<String, Object> model = new HashMap<>();
         String spaceName = "paas-" + serviceInstanceId.toLowerCase() + "-caas";
@@ -98,7 +99,7 @@ public class ContainerPlatformService {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        logger.debug("Here is your yml file!!! {}", yml);
+        logger.debug("Here is your yml file!!! {}", CommonUtils.loggerReplace(yml));
 
         restTemplateService.send(propertyService.getContainerPlatformUrl() + "/api/v1/namespaces", yml, HttpMethod.POST, String.class);
 
@@ -113,7 +114,7 @@ public class ContainerPlatformService {
      * @since 2018.07.30
      */
     public void createResourceQuota(String spaceName, Plan plan) {
-        logger.info("createUser Resource Quota ~~ space : {}   {}", spaceName, plan);
+        logger.info("createUser Resource Quota ~~ space : {}   {}", CommonUtils.loggerReplace(spaceName), CommonUtils.loggerReplace(plan));
 
         Map<String, Object> model = new HashMap<>();
         plan.setMemory(plan.getMemory().replace("B", "i"));
@@ -140,7 +141,7 @@ public class ContainerPlatformService {
      * @since 2018.09.03
      */
     public void createLimitRange(String spaceName) {
-        logger.info("createUser Limit Range ~~ space : {}   {}", spaceName);
+        logger.info("createUser Limit Range ~~ space : {}   {}", CommonUtils.loggerReplace(spaceName));
 
         Map<String, Object> model = new HashMap<>();
         model.put("rangeName", spaceName + "-limitrange");
@@ -165,7 +166,7 @@ public class ContainerPlatformService {
      * @since 2018.07.30
      */
     public void createUser(String spaceName, String userName) {
-        logger.info("createUser Account~~ {}", userName);
+        logger.info("createUser Account~~ {}", CommonUtils.loggerReplace(userName));
 
         Map<String, Object> model = new HashMap<>();
         model.put("spaceName", spaceName);
@@ -179,7 +180,7 @@ public class ContainerPlatformService {
         }
 
         restTemplateService.send(propertyService.getContainerPlatformUrl() + "/api/v1/namespaces/" + spaceName + "/serviceaccounts", yml, HttpMethod.POST, String.class);
-        logger.info("created Account~~ {}", userName);
+        logger.info("created Account~~ {}", CommonUtils.loggerReplace(userName));
         
     }
     
@@ -210,7 +211,7 @@ public class ContainerPlatformService {
      * @since 2018.07.30
      */
     public void createRole(String spaceName, String userName) {
-        logger.info("create Role And Binding~~ {}", userName);
+        logger.info("create Role And Binding~~ {}", CommonUtils.loggerReplace(userName));
 
         Map<String, Object> model = new HashMap<>();
         model.put("spaceName", spaceName);
@@ -235,7 +236,7 @@ public class ContainerPlatformService {
      * @since 2018.07.30
      */
     public void createRoleBinding(String spaceName, String userName) {
-        logger.info("create Binding {}", userName);
+        logger.info("create Binding {}", CommonUtils.loggerReplace(userName));
 
         Map<String, Object> model = new HashMap<>();
         model.put("spaceName", spaceName);
@@ -278,7 +279,7 @@ public class ContainerPlatformService {
         try {
             restTemplateService.send(propertyService.getContainerPlatformUrl() + "/api/v1/namespaces/" + namespace, HttpMethod.GET, String.class);
         } catch (HttpStatusCodeException exception) {
-            logger.info("can't find namespace {} {} ", exception.getStatusCode().value(), exception.getMessage());
+            logger.info("can't find namespace {} {} ", CommonUtils.loggerReplace(exception.getStatusCode().value()), CommonUtils.loggerReplace(exception.getMessage()));
             return false;
         }
         return true;
@@ -294,7 +295,7 @@ public class ContainerPlatformService {
      * @since 2018.07.30
      */
     public void changeResourceQuota(String spaceName, Plan plan) {
-        logger.info("changeUser Resource Quota ~~ space : {}   {}", spaceName, plan);
+        logger.info("changeUser Resource Quota ~~ space : {}   {}", CommonUtils.loggerReplace(spaceName), CommonUtils.loggerReplace(plan));
 
         Map<String, Object> model = new HashMap<>();
         plan.setMemory(plan.getMemory().replace("B", "i"));
@@ -313,7 +314,7 @@ public class ContainerPlatformService {
         String responseBody = restTemplateService.send(propertyService.getContainerPlatformUrl() + "/api/v1/namespaces/" + spaceName + "/resourcequotas/" + spaceName + "-resourcequota", yml, HttpMethod.PUT, String.class);
 
         if (null != responseBody)
-            logger.debug("Change ResourceQuota response body : {}", responseBody);
+            logger.debug("Change ResourceQuota response body : {}", CommonUtils.loggerReplace(responseBody));
     }
 
     /**
@@ -328,33 +329,33 @@ public class ContainerPlatformService {
         String docker_repo_uri = propertyService.getPrivateDockerUri() + ":" + propertyService.getPrivateDockerPort();
         String secretName = propertyService.getPrivateDockerSecretName();
 
-        logger.info("docker_repo_uri::::::" + docker_repo_uri + "   username:::::" + username + "    password::::::" + password);
+        logger.info("docker_repo_uri::::::" + CommonUtils.loggerReplace(docker_repo_uri) + "   username:::::" + CommonUtils.loggerReplace(username) + "    password::::::" + CommonUtils.loggerReplace(password));
 
         Map secretMap = new HashMap();
 
         // Secret YAML 의 secret
         String encodedSecret = Base64Utils.encodeToString((username + ":" + password).getBytes(StandardCharsets.UTF_8));
-        logger.info("AUTH ::::: " + encodedSecret);
+        logger.info("AUTH ::::: " + CommonUtils.loggerReplace(encodedSecret));
         secretMap.put("secret", encodedSecret);
 
 
         Map auth_property = new HashMap<String,String>(){{put("username", username); put("password", password); put("auth", encodedSecret);}};
-        logger.info("auth_property ::::: " + auth_property);
+        logger.info("auth_property ::::: " + CommonUtils.loggerReplace(auth_property.toString()));
 
 
         Map auth_value = new HashMap<String,Map<?,?>>(){{put(docker_repo_uri, auth_property);}};
-        logger.info("auth_value ::::: " + auth_value);
+        logger.info("auth_value ::::: " + CommonUtils.loggerReplace(auth_value.toString()));
 
 
         Map auth_result = new HashMap<String,Map<?,?>>(){{put("auths", auth_value);}};
-        logger.info("auth_result ::::: " + auth_result);
+        logger.info("auth_result ::::: " + CommonUtils.loggerReplace(auth_result.toString()));
 
 
         // Docker Secret YAML
         JSONObject jsonObject = new JSONObject(auth_result);
-        logger.info(jsonObject.toString());
+        logger.info(CommonUtils.loggerReplace(jsonObject.toString()));
         String auth_base64 = Base64Utils.encodeToString(jsonObject.toString().getBytes(StandardCharsets.UTF_8));
-        logger.info(auth_base64);
+        logger.info(CommonUtils.loggerReplace(auth_base64));
 
 
 
@@ -374,7 +375,7 @@ public class ContainerPlatformService {
         String responseBody = restTemplateService.send(propertyService.getContainerPlatformUrl() + "/api/v1/namespaces/" + nameSpace + "/secrets", yml, HttpMethod.POST, String.class);
 
         if (null != responseBody)
-            logger.debug("Change ResourceQuota response body : {}", responseBody);
+            logger.debug("Change ResourceQuota response body : {}", CommonUtils.loggerReplace(responseBody));
 
         return responseBody;
     }

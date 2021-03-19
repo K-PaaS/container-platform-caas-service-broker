@@ -2,6 +2,7 @@ package org.openpaas.servicebroker.container.platform.service.impl;
 
 import java.util.List;
 
+import org.openpaas.servicebroker.container.platform.common.CommonUtils;
 import org.openpaas.servicebroker.container.platform.model.JpaServiceInstance;
 import org.openpaas.servicebroker.container.platform.repo.JpaServiceInstanceRepository;
 import org.openpaas.servicebroker.container.platform.service.PropertyService;
@@ -65,43 +66,43 @@ public class InstanceServiceImpl implements ServiceInstanceService {
      */
     @Override
     public JpaServiceInstance createServiceInstance(final CreateServiceInstanceRequest request) throws ServiceInstanceExistsException, ServiceBrokerException {
-        logger.info("Create Kubernetes service instance : {}", request.getServiceInstanceId());
-        logger.info("sbCreate Kubernetes service instance : {}", request.getServiceInstanceId());
+        logger.info("Create Kubernetes service instance : {}", CommonUtils.loggerReplace(request.getServiceInstanceId()));
+        logger.info("sbCreate Kubernetes service instance : {}", CommonUtils.loggerReplace(request.getServiceInstanceId()));
         
         // 요청한 instance id를 이용해 해당 instance id가 있는지 확인
         JpaServiceInstance findInstance = instanceRepository.findByServiceInstanceId(request.getServiceInstanceId());
-        logger.info("111111Create Kubernetes service instance : {}", request.getServiceInstanceId());
+        logger.info("111111Create Kubernetes service instance : {}", CommonUtils.loggerReplace(request.getServiceInstanceId()));
         
         JpaServiceInstance instance = (JpaServiceInstance) new JpaServiceInstance(request);
         
-        logger.info("222222Create Kubernetes service instance : {}", request.getServiceInstanceId());
+        logger.info("222222Create Kubernetes service instance : {}", CommonUtils.loggerReplace(request.getServiceInstanceId()));
 
         if (findInstance != null) {
             if (findInstance.getServiceInstanceId().equals(instance.getServiceInstanceId())) {
-                logger.info("ServiceInstance : {} OR OrgGuid : {} is exist.", request.getServiceInstanceId(), request.getOrganizationGuid());
+                logger.info("ServiceInstance : {} OR OrgGuid : {} is exist.", CommonUtils.loggerReplace(request.getServiceInstanceId()), CommonUtils.loggerReplace(request.getOrganizationGuid()));
                 throw new ServiceBrokerException("ServiceInstance already exists in your organization.");
             } else {
                 throw new ServiceInstanceExistsException(instance);
             }
         }
         
-        logger.info("333333Create Kubernetes service instance : {}", request.getServiceInstanceId());
+        logger.info("333333Create Kubernetes service instance : {}", CommonUtils.loggerReplace(request.getServiceInstanceId()));
 
         if(instanceRepository.existsByOrganizationGuid(instance.getOrganizationGuid())) {
-            logger.error("ServiceInstance already exists in your organization: OrganizationGuid : {}, spaceId : {}", request.getOrganizationGuid(), request.getSpaceGuid());
+            logger.error("ServiceInstance already exists in your organization: OrganizationGuid : {}, spaceId : {}", CommonUtils.loggerReplace(request.getOrganizationGuid()), CommonUtils.loggerReplace(request.getSpaceGuid()));
             throw new ServiceBrokerException("ServiceInstance already exists in your organization.");
         }
 
-        logger.info("444444Create Kubernetes service instance : {}", request.getServiceInstanceId());
+        logger.info("444444Create Kubernetes service instance : {}", CommonUtils.loggerReplace(request.getServiceInstanceId()));
 
         // Caas에 생성된 namespace가 있는지 확인한다.
         if (existsNamespace(instance.getServiceInstanceId()))
             throw new ServiceBrokerException("Already exists namespace to given same name.");
 
-        logger.info("555555Create Kubernetes service instance : {}", request.getServiceInstanceId());
+        logger.info("555555Create Kubernetes service instance : {}", CommonUtils.loggerReplace(request.getServiceInstanceId()));
 
         containerPlatformService.createNamespaceUser(instance, getPlan(instance));
-        instance.withDashboardUrl(propertyService.getDashboardUrl(instance.getServiceInstanceId()));
+        instance.withDashboardUrl(propertyService.getDashboardUrl(CommonUtils.loggerReplace(instance.getServiceInstanceId())));
 
         // Private Registry의 Secret을 생성한다.
         containerPlatformService.createPrivateDockerSecret(instance.getCaasNamespace());
@@ -142,7 +143,7 @@ public class InstanceServiceImpl implements ServiceInstanceService {
      */
     @Override
     public ServiceInstance deleteServiceInstance(DeleteServiceInstanceRequest request) throws ServiceBrokerException {
-        logger.info("Delete Kubernetes service instance : {}", request.getServiceInstanceId());
+        logger.info("Delete Kubernetes service instance : {}", CommonUtils.loggerReplace(request.getServiceInstanceId()));
         
         //JpaServiceInstance instance = null;
         
@@ -151,10 +152,10 @@ public class InstanceServiceImpl implements ServiceInstanceService {
         // DB에 정보가 없을 때
         if (instance == null) {
             String spaceName = "paas-" + request.getServiceInstanceId() + "-caas";
-            logger.info("instance is not in DB. check existsNamespace {}", spaceName);
+            logger.info("instance is not in DB. check existsNamespace {}", CommonUtils.loggerReplace(spaceName));
             // 실제로 Namespace에도 없을 때 
             if (!existsNamespace(spaceName)) {
-                logger.info("No more delete thing {}", spaceName);
+                logger.info("No more delete thing {}", CommonUtils.loggerReplace(spaceName));
                 return null;
             }
             containerPlatformService.deleteNamespace(spaceName);
@@ -181,7 +182,7 @@ public class InstanceServiceImpl implements ServiceInstanceService {
      */
     @Override
     public ServiceInstance updateServiceInstance(UpdateServiceInstanceRequest request) throws ServiceBrokerException {
-        logger.info("Update Kubernetes service instance : {}", request.getServiceInstanceId());
+        logger.info("Update Kubernetes service instance : {}", CommonUtils.loggerReplace(request.getServiceInstanceId()));
         
         JpaServiceInstance findInstance = instanceRepository.findByServiceInstanceId(request.getServiceInstanceId());
         if (null == findInstance)
@@ -191,11 +192,11 @@ public class InstanceServiceImpl implements ServiceInstanceService {
 
         if (findInstance.equals(instance)) {
             String planId = instance.getPlanId();
-            logger.debug("Plan ID : {}", planId);
+            logger.debug("Plan ID : {}", CommonUtils.loggerReplace(planId));
 
             if (null != planId) {
                 // 지정한 Plan ID가 실제 있는 Plan의 UUID가 맞는지 유효성 확인.
-                logger.info("Change Plan : {} -> {}", findInstance.getPlanId(), instance.getPlanId());
+                logger.info("Change Plan : {} -> {}", CommonUtils.loggerReplace(findInstance.getPlanId()), CommonUtils.loggerReplace(instance.getPlanId()));
                 Plan oldPlan = this.getPlan(findInstance);
                 Plan newPlan = this.getPlan(instance);
                 if (oldPlan.getWeight() > newPlan.getWeight())

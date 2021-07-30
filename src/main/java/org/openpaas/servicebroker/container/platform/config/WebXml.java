@@ -1,7 +1,7 @@
 package org.openpaas.servicebroker.container.platform.config;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.support.SpringBootServletInitializer;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 /**
  * WebXml 설정 클래스

@@ -133,6 +133,11 @@ public class InstanceServiceImpl implements ServiceInstanceService {
         return instanceRepository.findByServiceInstanceId(serviceInstanceId);
     }
 
+    @Override
+    public ServiceInstance getOperationServiceInstance(String var1) {
+        return null;
+    }
+
     /**
      * 외부에서의 요청으로 전달받은 service instance id 등을 비교하여 Service Instance ID 정보를 찾은 다음,
      * Caas의 namespace의 삭제와 service instance 정보를 차례대로 삭제한다.
